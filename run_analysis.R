@@ -40,7 +40,7 @@ for (i in 1:30) {
 # 6. Renaming data to "tidy Data.txt"
 colnames(tidy_frame)<-colnames(newDataFrame2) #rename the columns again, as the names get lost in the mix above
 levels(tidy_frame[,2])<-c('walk','upstairswalk','downstairswalk', 'sit','stand', 'lay')
-write.table(tidy_frame, "tidy Data.txt", sep = "")
+write.table(tidy_frame, "tidy Data.txt", sep = "",row.names = FALSE)
 
 
 
