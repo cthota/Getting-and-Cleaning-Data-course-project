@@ -1,47 +1,57 @@
-# 1. Read the data files into R:
-stest <- read.table("subject_test.txt")
-xtest <- read.table("X_test.txt")
-ytest <- read.table("Y_test.txt")
-strain <- read.table("subject_train.txt")
+#Step1.Merges the training and test sets to create one data set
 xtrain <- read.table("X_train.txt")
-ytrain <- read.table("Y_train.txt")
-# 2. Merges the training and the test sets into one dataset
-x <- rbind(xtrain, xtest)
-y <- rbind(ytrain, ytest)
-s <- rbind(strain, stest)
-all <- cbind(s, y, x)
-rm(xtest,ytest,xtrain,ytrain,strain,stest,x,y,s)  # removing data not required to clear space
-# 3. Uses descritive activity names to name the activites and give descriptive variable names
+ytrain <- read.table("y_train.txt")
+strain <- read.table("subject_train.txt")
+xtest <- read.table("X_test.txt")
+ytest <- read.table("y_test.txt") 
+stest <- read.table("subject_test.txt")
+xData <- rbind(xtrain, xtest)
+yData <- rbind(ytrain, ytest)
+sData<- rbind(strain, stest)
+
+# Step2. Extracts only the measurements on the mean and standard 
+# deviation for each measurement. 
 features <- read.table("features.txt")
-activities <- read.table("activity_labels.txt")
-featureNames <- as.character(features[,2])
-newCols <- c("subject", "activity", featureNames)
-colnames(all) <- newCols
-# 4. Create a new data frame whose measurement columns contain only mean and st. dev features
-Means <- grep("mean()", colnames(all))
-StDev <- grep("std()", colnames(all))
-revisedColumns <- c(Means, StDev)
-revisedColumns2 <- sort(revisedColumns) 
-newDataFrame <- all[, c(1,2,revisedColumns2)]
-newDataFrame2 <- newDataFrame[, !grepl("Freq", colnames(newDataFrame))] #get rid of the meanFreq columns
+meanStdIndices <- grep("mean\\(\\)|std\\(\\)", features[, 2])
+joinData <- xData [, meanStdIndices]
+names(joinData) <- gsub("\\(\\)", "", features[meanStdIndices, 2]) # remove "()"
+names(joinData) <- gsub("mean", "Mean", names(joinData)) # capitalize M
+names(joinData) <- gsub("std", "Std", names(joinData)) # capitalize S
+names(joinData) <- gsub("-", "", names(joinData)) # remove "-" in column names 
 
-rm(newDataFrame, all)  # removing data not required to clear space
-# 5. creating a second independent tidydata to show mean values for each subject-activity pair
-tidy_frame <- data.frame()
-for (i in 1:30) {
-        subject<- subset(newDataFrame2,subject==i)
-        for (j in 1:6){
-                subact<- subset(subject, activity==j)
-                tidy_data<-as.vector(apply(subact,2,mean))
-                tidy_frame<-rbind(tidy_frame,tidy_data) 
+# Step3. Uses descriptive activity names to name the activities in 
+# the data set
+activity <- read.table("activity_labels.txt")
+activity[, 2] <- tolower(gsub("_", "", activity[, 2]))
+substr(activity[2, 2], 8, 8) <- toupper(substr(activity[2, 2], 8, 8))
+substr(activity[3, 2], 8, 8) <- toupper(substr(activity[3, 2], 8, 8))
+activityLabel <- activity[yData [, 1], 2]
+yData [, 1] <- activityLabel
+names(yData ) <- "activity"
+
+# Step4. Appropriately labels the data set with descriptive activity 
+# names. 
+names(sData) <- "subject" 
+cleanedData <- cbind(sData, yData , joinData)
+write.table(cleanedData, "merged_data.txt") # writes the 1st dataset
+
+# Step5. Creates a second, independent tidy data set with the average of 
+# each variable for each activity and each subject. 
+subjectLen <- length(table(sData)) 
+activityLen <- dim(activity)[1] 
+columnLen <- dim(cleanedData)[2]
+Outcome <- matrix(NA, nrow=subjectLen*activityLen, ncol=columnLen) 
+Outcome <- as.data.frame(Outcome)
+colnames(Outcome) <- colnames(cleanedData)
+row <- 1
+for(i in 1:subjectLen) {
+        for(j in 1:activityLen) {
+                Outcome[row, 1] <- sort(unique(sData)[, 1])[i]
+                Outcome[row, 2] <- activity[j, 2]
+                bool1 <- i == cleanedData$subject
+                bool2 <- activity[j, 2] == cleanedData$activity
+                Outcome[row, 3:columnLen] <- colMeans(cleanedData[bool1&bool2, 3:columnLen])
+                row <- row + 1
         }
-        
 }
-# 6. Renaming data to "tidy Data.txt"
-colnames(tidy_frame)<-colnames(newDataFrame2) #rename the columns again, as the names get lost in the mix above
-levels(tidy_frame[,2])<-c('walk','upstairswalk','downstairswalk', 'sit','stand', 'lay')
-write.table(tidy_frame, "tidy Data.txt", sep = "",row.names = FALSE)
-
-
-
-
+write.table(Outcome, "tidy data.txt",row.names = FALSE) # writes out the tidy dataset
