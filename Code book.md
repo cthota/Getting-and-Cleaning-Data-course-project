@@ -28,7 +28,8 @@ An identifier of the subject who carried out the experiment.
 This code book describes the variables, the data, and any transformations or work that is performed to clean up the data
 Description
 
-In Step 1 after setting the source directory for the files, a code was written to create one data set for the following training and test sets.
+In Step 1 after setting the source directory for the files, a code was written 
+* to create one data set for the following training and test sets.
 
 subject_train.txt
 x_train.txt
