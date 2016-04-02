@@ -44,6 +44,7 @@ In step 2 a code was written to extracts only the mean and standard deviation fo
 - capitalized first letter in means and standards using gsub function to make the data look tidy.
 
 In step3 a code was written to 
+
 -remove underscore(_) in activity labels and to 
 -change font to lower from upper and to use descriptive activity names to name the activities. 
 
