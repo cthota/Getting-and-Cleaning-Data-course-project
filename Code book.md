@@ -28,7 +28,7 @@ An identifier of the subject who carried out the experiment.
 This code book describes the variables, the data, and any transformations or work that is performed to clean up the data
 Description
 
-In Step 1 after setting the source directory for the files, a code was written to create one data set for  the following training and test sets.
+In Step 1 after setting the source directory for the files, a code was written to create one data set for the following training and test sets.
 
 subject_train.txt
 x_train.txt
@@ -38,16 +38,16 @@ x_test.txt
 y_test.txt
 
 In step 2 a code was written to extracts only the mean and standard deviation for each measurement.
-# Mean and standards for the variables are identified using grep function.
-# Joined both the mean and standard indices. Removed parentheses’ ’()’after means and standards and hyphens(-)in columns and
-# capitalized first letter in means and standards using gsub function to make the data look tidy.
+* Mean and standards for the variables are identified using grep function.
+* Joined both the mean and standard indices. Removed parentheses’ ’()’after means and standards and hyphens(-)in columns and
+* capitalized first letter in means and standards using gsub function to make the data look tidy.
 
 In step3 a code was written to 
-#remove underscore(_) in activity labels and to 
-#change font to lower from upper and to use descriptive activity names to name the activities. 
+* remove underscore(_) in activity labels and to 
+* change font to lower from upper and to use descriptive activity names to name the activities. 
 
 In step 4 a code was written to 
-#bind the data after initial cleaning and to write a table by merging data and to give descriptive variable names for each measurement.
+* bind the data after initial cleaning and to write a table by merging data and to give descriptive variable names for each measurement.
 
 In step 5 a code was written to 
-#create a second, independent tidy data set which shows the average of each variable for each activity and each subject and to save the data to "tidy data.txt"
+* create a second, independent tidy data set which shows the average of each variable for each activity and each subject and to save the data to "tidy data.txt"
